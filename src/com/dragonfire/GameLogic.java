@@ -24,7 +24,7 @@ public class GameLogic extends UnicastRemoteObject implements GameLogicInterface
     int deckSize;
     int player1Hand;
     int player2Hand;
-    
+
     //<editor-fold defaultstate="collapsed" desc="2 Player Multiplayer Functonallity Values">
     boolean Player1 = false;
     boolean Player2 = false;
@@ -35,6 +35,7 @@ public class GameLogic extends UnicastRemoteObject implements GameLogicInterface
     {
         super();
         fillDeck();
+        shuffleDeck();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Old Game Logics">
@@ -116,19 +117,29 @@ public class GameLogic extends UnicastRemoteObject implements GameLogicInterface
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    /**
+     * Send in a Player to let that Player draw a card from the shared Deck.
+     * It then return that card to be stored Localy.
+     * @param Player
+     * @return
+     * @throws RemoteException 
+     */
     @Override
-    public Card drawCardFromDeck(int Player) throws RemoteException
+    public final Card drawCardFromDeck(int Player) throws RemoteException
     {
-        if(deck.size() > 0) {
-            return deck.get(0);
+        if (deck.size() > 0)
+        {
+            shuffleDeck();
+            Card card = new Card(deck.get(0).face, deck.get(0).value);
+            deck.remove(0);
+            return card;
         }
-        
+
         return joker;
     }
 
     @Override
-    public void shuffleDeck() throws RemoteException
+    public final void shuffleDeck() throws RemoteException
     {
         Collections.shuffle(deck, new Random(seed));
     }
